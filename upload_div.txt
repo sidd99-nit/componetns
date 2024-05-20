@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload Component</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            border: 2px dashed #cccccc;
+            border-radius: 8px;
+            width: 400px;
+            background-color: #ffffff;
+        }
+
+        .description {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .upload-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 200px;
+            height: 150px;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            height: 32px;
+            width: 32px;
+            color: #999999;
+        }
+
+        .instructions {
+            font-size: 14px;
+            margin: 8px 0;
+        }
+
+        .choose-file {
+            color: #1e90ff;
+            cursor: pointer;
+        }
+
+        .supported-formats, .max-size {
+            font-size: 12px;
+            color: #777777;
+            margin: 4px 0;
+        }
+
+        .file-list {
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            margin-top: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .file-name {
+            font-size: 14px;
+        }
+
+        .remove-button {
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .upload-button {
+            margin-top: 16px;
+            padding: 8px 16px;
+            background-color: #1e90ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p class="description">Users can upload multiple images at once</p>
+        <div class="upload-area" onclick="triggerFileInput()">
+            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" x2="12" y1="3" y2="15" />
+            </svg>
+        </div>
+        <p class="instructions">Drag and Drop file here or <span class="choose-file" onclick="triggerFileInput()">Choose file</span></p>
+        <p class="supported-formats">Supported formats: jpg | png | pdf | xlsx | csv</p>
+        <p class="max-size">Maximum size: 10MB</p>
+        <input type="file" id="fileInput" multiple style="display:none;">
+        <div class="file-list" id="fileList"></div>
+        <button class="upload-button" onclick="uploadFiles()">Upload</button>
+    </div>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        let files = [];
+
+        function triggerFileInput() {
+            fileInput.click();
+        }
+
+        fileInput.addEventListener('change', function(event) {
+            const newFiles = Array.from(event.target.files);
+            files = files.concat(newFiles);
+            renderFileList();
+        });
+
+        function renderFileList() {
+            fileList.innerHTML = '';
+            files.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                const fileName = document.createElement('span');
+                fileName.className = 'file-name';
+                fileName.textContent = file.name;
+                const removeButton = document.createElement('button');
+                removeButton.className = 'remove-button';
+                removeButton.textContent = '×';
+                removeButton.onclick = () => {
+                    files.splice(index, 1);
+                    renderFileList();
+                };
+                fileItem.appendChild(fileName);
+                fileItem.appendChild(removeButton);
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function uploadFiles() {
+            const formData = new FormData();
+            files.forEach(file => {
+                formData.append('files', file);
+            });
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                // Handle success response
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle error response
+            });
+        }
+    </script>
+</body>
+</html>
+

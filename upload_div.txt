@@ -8,6 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -117,12 +118,12 @@
             </svg>
         </div>
         <p class="instructions">Drag and Drop file here or <span class="choose-file" onclick="triggerFileInput()">Choose file</span></p>
-        <p class="supported-formats">Supported formats: jpg | png | pdf | xlsx | csv</p>
-        <p class="max-size">Maximum size: 10MB</p>
         <input type="file" id="fileInput" multiple style="display:none;">
         <div class="file-list" id="fileList"></div>
         <button class="upload-button" onclick="uploadFiles()">Upload</button>
     </div>
+    <p class="supported-formats">Supported formats: jpg | png | pdf | xlsx | csv</p>
+    <p class="max-size">Maximum size: 10MB</p>
     <script>
         const fileInput = document.getElementById('fileInput');
         const fileList = document.getElementById('fileList');
@@ -182,4 +183,3 @@
     </script>
 </body>
 </html>
-
